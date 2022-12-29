@@ -19,7 +19,9 @@ def get_status_screenshot():
     panel_data = None
     with open(PANEL_DATA_JSON_FILE, 'r') as f:
         panel_data = json.loads(f.read())
-    html_str = flask.render_template('index.html', status=panel_data["status"])
+    status = panel_data["status"]
+    html_str = flask.render_template('index.html', status=status)
+    print("Returning screnshot with status ", status)
     hti.screenshot(html_str=html_str, save_as='kindle_panel_screenshot.png', size=(600, 800))
     return flask.send_file('kindle_panel_screenshot.png', mimetype='image/png')
 
