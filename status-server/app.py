@@ -24,6 +24,11 @@ def store_panel_data(panel_data):
         data_str = json.dumps(panel_data, indent=4)
         f.write(data_str)
 
+def load_css_str(path):
+    css_file = os.path.join(SCRIPT_DIR, 'static', 'css', 'stylesheet.css')
+    with open(path, 'r') as f:
+        return f.read()
+
 @app.route('/')
 def index():
     panel_data = load_panel_data()
@@ -35,7 +40,10 @@ def get_status_screenshot():
     panel_data = load_panel_data()
     status = panel_data["status"]
     html_str = flask.render_template('index.html', status=status)
-    hti.screenshot(html_str=html_str, save_as='kindle_panel_screenshot.png', size=(600, 800))
+    # N.B. for some reason, `screenshot` doesn't seem to work when I pass a css_file parameter. I suspect it's some path
+    # problem but I don't want to dig into it now
+    css = load_css_str(os.path.join(SCRIPT_DIR, 'static', 'css', 'stylesheet.css'))
+    hti.screenshot(html_str=html_str, css_str=css, save_as='kindle_panel_screenshot.png', size=(600, 800))
     return flask.send_file('kindle_panel_screenshot.png', mimetype='image/png', max_age=0)
 
 @app.route('/set_status')
