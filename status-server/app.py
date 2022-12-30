@@ -3,6 +3,7 @@ import json
 import html2image
 
 app = flask.Flask(__name__)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 5
 
 PANEL_DATA_JSON_FILE = "/tmp/kindle_panel_data.json"
 
