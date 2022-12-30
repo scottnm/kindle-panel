@@ -29,11 +29,11 @@ def get_status_screenshot():
 @app.route('/set_status')
 def set_status():
     query_params = flask.request.args.to_dict()
-    print(query_params["new_status"])
-    updated_panel_data_json = json.dumps({ "status": query_params["new_status"] }, indent=4)
+    print(query_params["status"])
+    updated_panel_data_json = json.dumps({ "status": query_params["status"] }, indent=4)
     with open(PANEL_DATA_JSON_FILE, 'w') as f:
         f.write(updated_panel_data_json)
-    return flask.render_template('set_status.html', new_status=query_params["new_status"])
+    return flask.render_template('set_status.html', status=query_params["status"])
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
