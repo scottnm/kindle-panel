@@ -6,10 +6,8 @@ import os
 
 app = flask.Flask(__name__)
 
-# set the file max age to 5 seconds to work around browser caching file responses
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 5
-
 PANEL_DATA_JSON_FILE = os.path.join(tempfile.gettempdir(), "kindle_panel_data.json")
+SCRIPT_DIR = os.path.realpath(os.path.dirname(__file__))
 
 def load_panel_data():
     try:
@@ -33,12 +31,12 @@ def index():
 
 @app.route('/get_status_screenshot')
 def get_status_screenshot():
-    hti = html2image.Html2Image()
+    hti = html2image.Html2Image(output_path=SCRIPT_DIR)
     panel_data = load_panel_data()
     status = panel_data["status"]
     html_str = flask.render_template('index.html', status=status)
     hti.screenshot(html_str=html_str, save_as='kindle_panel_screenshot.png', size=(600, 800))
-    return flask.send_file('kindle_panel_screenshot.png', mimetype='image/png')
+    return flask.send_file('kindle_panel_screenshot.png', mimetype='image/png', max_age=0)
 
 @app.route('/set_status')
 def set_status():
