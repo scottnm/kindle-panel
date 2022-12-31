@@ -3,6 +3,7 @@ import json
 import html2image
 import tempfile
 import os
+import subprocess
 
 app = flask.Flask(__name__)
 
@@ -44,7 +45,16 @@ def get_status_screenshot():
     # problem but I don't want to dig into it now
     css = load_css_str(os.path.join(SCRIPT_DIR, 'static', 'css', 'stylesheet.css'))
     hti.screenshot(html_str=html_str, css_str=css, save_as='kindle_panel_screenshot.png', size=(600, 800))
-    return flask.send_file('kindle_panel_screenshot.png', mimetype='image/png', max_age=0)
+    convert_result = subprocess.call(
+        ["magick", os.path.join(SCRIPT_DIR, "kindle_panel_screenshot.png"),
+         "-gravity", "center",
+         "-extent", "600x800",
+         "-colorspace", "gray",
+         "-depth", "8",
+         os.path.join(SCRIPT_DIR, "kindle_panel_screenshot_gray8.png")])
+    if convert_result != 0:
+        print("png gray8 conversion failed!", convert_result)
+    return flask.send_file('kindle_panel_screenshot_gray8.png', mimetype='image/png', max_age=0)
 
 @app.route('/set_status')
 def set_status():
